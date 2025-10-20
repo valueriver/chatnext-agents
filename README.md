@@ -2,9 +2,8 @@
 
 🤖 模块化多 Agent 终端助手：主控管理者按需编排各功能 Agent，既能通过智能认知刷新、长期记忆管理、历史记录搜索打造“记忆型”对话体验，又能借助 Shell 命令执行与 SQLite 查询解锁实用技能；配合 Agent 管理 / 构建能力，系统具备自我治理与持续扩展的潜力。  
 🌐 兼容模型：OpenAI、DeepSeek、Kimi、Gemini（OpenAI 接口）、Grok、Mistral、Doubao 等所有支持 OpenAI Chat Completions + Tool Calling 的服务。  
-🛠️ 技术栈：Node.js · SQLite · MIT License。无论直接上手使用、二次开发还是作为多 Agent 方案参考都非常合适。
 
-## Agents
+## Default Agents
 - 🧠 `main_manager` – 总控中枢，判断意图并派发子任务  
 - 🔎 `history_seeker` – 检索历史消息，补全上下文  
 - 🗂️ `memory_manager` – 管理长期记忆（增删改查）  
