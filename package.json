@@ -1,0 +1,32 @@
+{
+  "name": "agents-multi-agent-framework",
+  "version": "1.0.0",
+  "description": "多 Agent 框架 - 基于 Node.js 的智能笔记管理系统",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "agents",
+    "ai",
+    "multi-agent",
+    "notes",
+    "sqlite",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "sqlite3": "^5.1.6",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
