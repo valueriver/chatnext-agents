@@ -1,19 +1,21 @@
-# Chatnext Agents
+# ⚡️ Chatnext Agents
 
-模块化的多 Agent 终端助手：主控管理者按需编排各个 Agent，既能通过智能认知刷新、长期记忆管理和历史记录搜索打造记忆型对话体验，又可凭借 Shell 命令执行与 SQLite 查询扩展实用技能；配合 Agent 管理与构建模块，系统具备自我治理和持续扩展能力。该框架可直接对接任意兼容 OpenAI Chat Completions + 工具调用规范的模型（如 OpenAI、DeepSeek 等）。
+🤖 模块化多 Agent 终端助手：主控管理者按需编排各功能 Agent，既能通过智能认知刷新、长期记忆管理、历史记录搜索打造“记忆型”对话体验，又能借助 Shell 命令执行与 SQLite 查询解锁实用技能；配合 Agent 管理 / 构建能力，系统具备自我治理与持续扩展的潜力。  
+🌐 兼容模型：OpenAI、DeepSeek、Kimi、Gemini（OpenAI 接口）、Grok、Mistral、Doubao 等所有支持 OpenAI Chat Completions + Tool Calling 的服务。  
+🛠️ 技术栈：Node.js · SQLite · MIT License。无论直接上手使用、二次开发还是作为多 Agent 方案参考都非常合适。
 
 ## Agents
-- `main_manager` – 总控中枢，判断意图并派发子任务  
-- `history_seeker` – 在历史消息中检索上下文  
-- `memory_manager` – 维护长期记忆（增删改查）  
-- `sqlite_manager` – 执行自定义 SQL  
-- `shell_executor` – 运行系统 Shell 命令  
-- `agent_manager` – 查看与维护现有 Agent  
-- `agent_builder` – 生成或扩展 Agent 框架
+- 🧠 `main_manager` – 总控中枢，判断意图并派发子任务  
+- 🔎 `history_seeker` – 检索历史消息，补全上下文  
+- 🗂️ `memory_manager` – 管理长期记忆（增删改查）  
+- 🧮 `sqlite_manager` – 执行自定义 SQL  
+- 🖥️ `shell_executor` – 运行系统 Shell 命令  
+- 🧭 `agent_manager` – 查看与维护现有 Agent  
+- 🏗️ `agent_builder` – 生成或扩展 Agent 框架
 
 ## Quick Start
 1. 安装依赖：`npm install`
-2. 配置 OpenAI 兼容模型参数（任意遵循同规范且具备工具调用能力的服务，如 OpenAI、DeepSeek 等）：
+2. 配置 OpenAI 兼容模型参数（如 OpenAI、DeepSeek、Kimi、Gemini、Grok、Mistral、Doubao 等任意遵循同规范并具备工具调用能力的服务）：
    ```bash
    export OPENAI_API_KEY=your_key
    export OPENAI_API_URL=https://api.openai.com # 可选，默认为官方地址
@@ -25,7 +27,7 @@
 - `loader.js` 按约定式目录加载指定 Agent 的 `prompt`、`tools`、`map`、`model`，并将系统提示与当前消息交给 `runAgent`。
 - `runAgent` 内部是一个 `while` 循环：每轮向兼容 OpenAI 工具调用规范的模型发起请求；若返回普通文本，直接回复用户并结束循环。
 - 若模型返回工具调用，则根据当前 Agent 的 `map.js` 判断是执行 `functions/` 中的函数，还是递归触发其他 Agent；执行结果写回消息队列后继续下一轮，直到得到最终回答。
-- 消息、认知概览和调用日志统一写入 SQLite，便于历史回放与状态追踪。
+- 全流程会把消息、认知概览与调用日志写入 SQLite，方便历史回放与状态追踪。
 
 ## Agent Development Guide
 - **结构约定**：每个 Agent 位于 `agents/<name>/`，包含 `model.js`、`prompt.js`、`tools.js`、`map.js` 以及可选的 `functions/` 实现。
