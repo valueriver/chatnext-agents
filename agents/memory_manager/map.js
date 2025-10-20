@@ -1,7 +1,7 @@
-import { createMemory } from './actions/create.js'
-import { readMemory } from './actions/read.js'
-import { updateMemory } from './actions/update.js'
-import { deleteMemory } from './actions/delete.js'
+import { createMemory } from './functions/create.js'
+import { readMemory } from './functions/read.js'
+import { updateMemory } from './functions/update.js'
+import { deleteMemory } from './functions/delete.js'
 
 const toolMap = [
   {

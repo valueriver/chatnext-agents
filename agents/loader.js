@@ -24,18 +24,23 @@ export async function loadAgent(agentName) {
     const agentBasePath = `./${agentName}`
 
     // 并行加载所有必需文件
-    const [promptModule, toolsModule, mapModule, modelModule] = await Promise.all([
-      loadModuleWithValidation(`${agentBasePath}/prompt.js`, 'getPrompt'),
-      loadModuleWithValidation(`${agentBasePath}/tools/list.js`, 'default'),
-      loadModuleWithValidation(`${agentBasePath}/tools/map.js`, 'default'),
-      loadModuleWithValidation(`${agentBasePath}/model.js`, 'model')
+    const [modelModule, promptModule, toolsModule, mapModule] = await Promise.all([
+      loadModuleWithValidation(`${agentBasePath}/model.js`, 'default'),
+      loadModuleWithValidation(`${agentBasePath}/prompt.js`, 'default'),
+      loadModuleWithValidation(`${agentBasePath}/tools.js`, 'default'),
+      loadModuleWithValidation(`${agentBasePath}/map.js`, 'default'),
     ])
 
+    const unwrap = (module) => {
+      const value = module.default
+      return typeof value === 'function' ? value() : value
+    }
+
     return {
-      prompt: promptModule.getPrompt(),
-      tools: toolsModule.default,
-      map: mapModule.default,
-      model: modelModule.model,
+      model: unwrap(modelModule),
+      prompt: unwrap(promptModule),
+      tools: unwrap(toolsModule),
+      map: unwrap(mapModule),
     }
   } catch (error) {
     throw new Error(`加载Agent "${agentName}" 失败: ${error.message}`)

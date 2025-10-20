@@ -1,11 +1,11 @@
 //@ts-check
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const AGENTS_DIR = join(__dirname, '../../../../')
+const AGENTS_DIR = join(__dirname, '../../../')
 
 /**
  * 为Agent添加新工具
@@ -27,14 +27,14 @@ export async function addTool({ agentName, toolName, toolDescription, toolParame
       return `❌ Agent "${agentName}" 不存在`
     }
 
-    // 更新tools/list.js
-    await updateToolsList(agentPath, toolName, toolDescription, toolParameters)
+    // 更新tools.js
+    await updateTools(agentPath, toolName, toolDescription, toolParameters)
 
-    // 更新tools/map.js
-    await updateToolsMap(agentPath, toolName)
+    // 更新map.js
+    await updateToolMap(agentPath, toolName, toolParameters)
 
-    // 创建新的action文件
-    await createActionFile(agentPath, toolName, toolDescription, toolParameters)
+    // 创建新的函数文件
+    await createFunctionFile(agentPath, toolName, toolDescription, toolParameters)
 
     return `✅ 工具 "${toolName}" 成功添加到Agent "${agentName}"
 
@@ -43,11 +43,11 @@ export async function addTool({ agentName, toolName, toolDescription, toolParame
 📝 描述: ${toolDescription}
 
 📋 更新的文件:
-- tools/list.js      # 添加了工具定义
-- tools/map.js       # 添加了工具映射
-- tools/actions/${toolName}..js    # 新建工具实现
+- tools.js           # 添加了工具定义
+- map.js             # 添加了工具映射
+- functions/${toolName}.js    # 新建工具实现
 
-💡 下一步：编辑 tools/actions/${toolName}.js 实现具体的工具逻辑
+💡 下一步：编辑 functions/${toolName}.js 实现具体的工具逻辑
 `
   } catch (error) {
     return `❌ 添加工具失败: ${error.message}`
@@ -55,11 +55,11 @@ export async function addTool({ agentName, toolName, toolDescription, toolParame
 }
 
 /**
- * 更新tools/list.js
+ * 更新tools.js
  */
-async function updateToolsList(agentPath, toolName, toolDescription, toolParameters) {
-  const listPath = join(agentPath, 'tools', 'list.js')
-  let content = await readFile(listPath, 'utf8')
+async function updateTools(agentPath, toolName, toolDescription, toolParameters) {
+  const toolsPath = join(agentPath, 'tools.js')
+  let content = await readFile(toolsPath, 'utf8')
 
   const parameters = Object.keys(toolParameters).length > 0
     ? JSON.stringify(toolParameters, null, 8).replace(/"([^"]+)":/g, '$1:')
@@ -86,22 +86,22 @@ async function updateToolsList(agentPath, toolName, toolDescription, toolParamet
     `,\n${newTool}\n]`
   )
 
-  await writeFile(listPath, content, 'utf8')
+  await writeFile(toolsPath, content, 'utf8')
 }
 
 /**
- * 更新tools/map.js
+ * 更新map.js
  */
-async function updateToolsMap(agentPath, toolName) {
-  const mapPath = join(agentPath, 'tools', 'map.js')
+async function updateToolMap(agentPath, toolName, toolParameters) {
+  const mapPath = join(agentPath, 'map.js')
   let content = await readFile(mapPath, 'utf8')
 
   // 添加import
   if (!content.includes(`import { ${toolName} }`)) {
-    content = `import { ${toolName} } from './actions/${toolName}.js'\n` + content
+    content = `import { ${toolName} } from './functions/${toolName}.js'\n` + content
   }
 
-  const paramNames = Object.keys({})
+  const paramNames = Object.keys(toolParameters || {})
   const newTool = `  {
     name: '${toolName}',
     type: 'function',
@@ -122,10 +122,13 @@ async function updateToolsMap(agentPath, toolName) {
 }
 
 /**
- * 创建新的action文件
+ * 创建新的函数文件
  */
-async function createActionFile(agentPath, toolName, toolDescription, toolParameters) {
-  const actionPath = join(agentPath, 'tools', 'actions', `${toolName}.js`)
+async function createFunctionFile(agentPath, toolName, toolDescription, toolParameters) {
+  const functionsDir = join(agentPath, 'functions')
+  await mkdir(functionsDir, { recursive: true })
+
+  const functionPath = join(functionsDir, `${toolName}.js`)
 
   const params = Object.keys(toolParameters).map(param => `  @param {string} args.${param} ${toolParameters[param].description}`).join('\n')
   const paramNames = Object.keys(toolParameters).join(', ')
@@ -146,5 +149,5 @@ export async function ${toolName}({ ${paramNames} }) {
   }
 }`
 
-  await writeFile(actionPath, content, 'utf8')
+  await writeFile(functionPath, content, 'utf8')
 }

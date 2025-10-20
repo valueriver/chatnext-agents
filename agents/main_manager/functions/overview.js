@@ -1,5 +1,5 @@
 //@ts-check
-import { sqlite } from '../../../../database/sqlite.js'
+import { sqlite } from '../../../database/sqlite.js'
 
 /**
  * 更新AI对用户的认知状态（插入新的认知记录）

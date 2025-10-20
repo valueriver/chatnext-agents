@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const AGENTS_DIR = join(__dirname, '../../../../')
+const AGENTS_DIR = join(__dirname, '../../../')
 
 /**
  * 列出所有已存在的Agent
@@ -43,7 +43,7 @@ export async function listAgents() {
         }
 
         // 检查工具数量
-        const toolsListPath = join(agentsPath, agentName, 'tools', 'list.js')
+        const toolsListPath = join(agentsPath, agentName, 'tools.js')
         const toolsContent = await readFile(toolsListPath, 'utf8')
         const toolMatches = toolsContent.match(/name: '([^']+)'/g) || []
         result += `   🔧 工具: ${toolMatches.length}个\n`

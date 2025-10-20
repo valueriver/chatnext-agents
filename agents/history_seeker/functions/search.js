@@ -1,4 +1,4 @@
-import { sqlite } from '../../../../database/sqlite.js'
+import { sqlite } from '../../../database/sqlite.js'
 
 /**
  * 搜索对话历史记录

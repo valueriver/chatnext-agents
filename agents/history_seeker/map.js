@@ -1,4 +1,4 @@
-import { searchMessages } from './actions/search.js'
+import { searchMessages } from './functions/search.js'
 
 const toolMap = [
   {

@@ -1,5 +1,5 @@
 //@ts-check
-import { sqlite } from '../../../../database/sqlite.js'
+import { sqlite } from '../../../database/sqlite.js'
 
 /**
  * 更新现有记忆

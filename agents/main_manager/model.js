@@ -1,1 +1,1 @@
-export const model = 'gpt-4o-mini'
+export default 'gpt-4o-mini'

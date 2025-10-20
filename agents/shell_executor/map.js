@@ -1,4 +1,4 @@
-import { executeShell } from './actions/executeShell.js'
+import { executeShell } from './functions/executeShell.js'
 
 /**
  * Shell执行器Agent工具映射

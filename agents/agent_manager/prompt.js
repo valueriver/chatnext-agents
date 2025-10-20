@@ -1,8 +1,7 @@
 /**
  * Agent管理器Agent提示词
  */
-export function getPrompt() {
-  return `你是Agent系统管理专家，负责管理所有Agent的生命周期。
+export default `你是Agent系统管理专家，负责管理所有Agent的生命周期。
 
 ## 核心功能
 1. 查看系统中所有Agent的状态和代码
@@ -36,4 +35,3 @@ export function getPrompt() {
 - 确保Agent管理的安全性和可追溯性
 - 维护Agent生态系统的健康性
 `
-}

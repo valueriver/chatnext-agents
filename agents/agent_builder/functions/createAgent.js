@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const AGENTS_DIR = join(__dirname, '../../../../')
+const AGENTS_DIR = join(__dirname, '../../../')
 
 /**
  * 创建新的Agent
@@ -23,11 +23,10 @@ export async function createAgent({ agentName, description, tools = [] }) {
     }
 
     const agentPath = join(AGENTS_DIR, 'agents', agentName)
-    const toolsPath = join(agentPath, 'tools')
-    const actionsPath = join(toolsPath, 'actions')
+    const functionsPath = join(agentPath, 'functions')
 
     // 创建目录结构
-    await mkdir(actionsPath, { recursive: true })
+    await mkdir(functionsPath, { recursive: true })
 
     // 生成prompt.js
     const promptContent = generatePromptContent(description, tools)
@@ -40,18 +39,18 @@ export async function createAgent({ agentName, description, tools = [] }) {
 export const model = 'gpt-4o-mini'\n`
     await writeFile(join(agentPath, 'model.js'), modelContent, 'utf8')
 
-    // 生成tools/list.js
+    // 生成tools.js
     const toolsListContent = generateToolsListContent(tools)
-    await writeFile(join(toolsPath, 'list.js'), toolsListContent, 'utf8')
+    await writeFile(join(agentPath, 'tools.js'), toolsListContent, 'utf8')
 
-    // 生成tools/map.js
+    // 生成map.js
     const toolsMapContent = generateToolsMapContent(tools)
-    await writeFile(join(toolsPath, 'map.js'), toolsMapContent, 'utf8')
+    await writeFile(join(agentPath, 'map.js'), toolsMapContent, 'utf8')
 
-    // 为每个工具创建action文件
+    // 为每个工具创建函数文件
     for (const tool of tools) {
       const actionContent = generateActionContent(tool)
-      await writeFile(join(actionsPath, `${tool.name}.js`), actionContent, 'utf8')
+      await writeFile(join(functionsPath, `${tool.name}.js`), actionContent, 'utf8')
     }
 
     return `✅ Agent "${agentName}" 创建成功！
@@ -62,10 +61,10 @@ export const model = 'gpt-4o-mini'\n`
 
 📋 创建的文件:
 - prompt.js           # Agent提示词
-- model.js           # 模型配置
-- tools/list.js      # 工具定义
-- tools/map.js       # 工具映射
-${tools.map(tool => `- tools/actions/${tool.name}.js    # ${tool.description}`).join('\n')}
+- model.js            # 模型配置
+- tools.js            # 工具定义
+- map.js              # 工具映射
+${tools.map(tool => `- functions/${tool.name}.js    # ${tool.description}`).join('\n')}
 
 ✅ Agent已创建完成，系统会自动发现并加载该Agent
 `
@@ -80,36 +79,36 @@ ${tools.map(tool => `- tools/actions/${tool.name}.js    # ${tool.description}`).
 function generatePromptContent(description, tools) {
   const toolDescriptions = tools.map(tool => `- ${tool.name}: ${tool.description}`).join('\n')
 
-  return `/**
- * ${description}Agent提示词
- */
-export function getPrompt() {
-  return \`你是${description}专家，负责相关操作。
-
-## 核心功能
-1. ${description}
-2. 智能分析和决策
-3. 提供准确的结果和建议
-
-## 可用工具
-${toolDescriptions}
-
-## 工作流程
-1. 分析用户需求和问题
-2. 选择合适的工具执行操作
-3. 根据工具结果进行分析
-4. 提供清晰、有用的回答
-
-## 注意事项
-- 确保操作结果的准确性
-- 提供清晰的解释和建议
-- 遇到错误时给出解决方案
-\`
-}`
+  return [
+    '/**',
+    ` * ${description}Agent提示词`,
+    ' */',
+    `export default \`你是${description}专家，负责相关操作。`,
+    '',
+    '## 核心功能',
+    `1. ${description}`,
+    '2. 智能分析和决策',
+    '3. 提供准确的结果和建议',
+    '',
+    '## 可用工具',
+    `${toolDescriptions}`,
+    '',
+    '## 工作流程',
+    '1. 分析用户需求和问题',
+    '2. 选择合适的工具执行操作',
+    '3. 根据工具结果进行分析',
+    '4. 提供清晰、有用的回答',
+    '',
+    '## 注意事项',
+    '- 确保操作结果的准确性',
+    '- 提供清晰的解释和建议',
+    '- 遇到错误时给出解决方案',
+    '`',
+  ].join('\n')
 }
 
 /**
- * 生成tools/list.js内容
+ * 生成tools.js内容
  */
 function generateToolsListContent(tools) {
   const toolsArray = tools.map(tool => {
@@ -138,7 +137,7 @@ export default tools`
 }
 
 /**
- * 生成tools/map.js内容
+ * 生成map.js内容
  */
 function generateToolsMapContent(tools) {
   const toolsArray = tools.map(tool =>
@@ -151,7 +150,7 @@ function generateToolsMapContent(tools) {
   ).join(',\n')
 
   const imports = tools.map(tool =>
-    `import { ${tool.name} } from './actions/${tool.name}.js'`
+    `import { ${tool.name} } from './functions/${tool.name}.js'`
   ).join('\n')
 
   return `${imports}
@@ -167,7 +166,7 @@ export default toolMap`
 }
 
 /**
- * 生成action文件内容
+ * 生成函数文件内容
  */
 function generateActionContent(tool) {
   const params = Object.keys(tool.parameters || {}).map(param => `  @param {string} args.${param} ${tool.parameters[param].description}`).join('\n')

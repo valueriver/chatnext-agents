@@ -1,4 +1,4 @@
-import { executeSql } from './actions/executeSql.js'
+import { executeSql } from './functions/executeSql.js'
 
 /**
  * SQLite管理器Agent工具映射

@@ -1,6 +1,6 @@
-import { createAgent } from './actions/createAgent.js'
-import { addTool } from './actions/addTool.js'
-import { listAgents } from './actions/listAgents.js'
+import { createAgent } from './functions/createAgent.js'
+import { addTool } from './functions/addTool.js'
+import { listAgents } from './functions/listAgents.js'
 
 /**
  * Agent构建器Agent工具映射

@@ -1,4 +1,4 @@
-import { updateOverview } from './actions/overview.js'
+import { updateOverview } from './functions/overview.js'
 
 const toolMap = [
   {
